@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AppReverse Studio</title>
+<style>
+:root{--bg:#1e1e1e;--panel:#252526;--bar:#2d2d30;--bd:#3c3c3c;--tx:#cccccc;--mut:#8b8b8b;--ac:#3b8eea;--ok:#6ac17a;--er:#f0675c;--wr:#e0b44c;--sel:#094771}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:13px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:grid;grid-template-rows:42px 1fr 190px;overflow:hidden}
+button{font:inherit;color:var(--tx);background:transparent;border:1px solid transparent;border-radius:4px;padding:4px 9px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .12s}
+button:hover:not(:disabled){background:#3a3d41}
+button:disabled{opacity:.4;cursor:default}
+button.pri{background:var(--ac);color:#fff}button.pri:hover:not(:disabled){background:#2f7bd1}
+button:focus-visible,.f:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+svg.lucide{width:15px;height:15px}
+#top{display:flex;align-items:center;gap:4px;padding:0 10px;background:var(--bar);border-bottom:1px solid var(--bd);overflow-x:auto;white-space:nowrap}
+#top b{margin-right:12px;font-weight:600;letter-spacing:.2px}
+#top .sp{flex:1}
+#top .sep{width:1px;height:20px;background:var(--bd);margin:0 6px}
+#main{display:grid;grid-template-columns:270px 1fr 290px;min-height:0}
+.col{display:flex;flex-direction:column;min-height:0;background:var(--panel);border-right:1px solid var(--bd)}
+.col.r{border-right:0;border-left:1px solid var(--bd);overflow:auto}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;font-weight:600;color:var(--mut);border-bottom:1px solid var(--bd);background:var(--panel);flex:none}
+.ph div button{padding:2px 6px}
+.sc{overflow:auto;flex:1;min-height:0}
+#left{display:grid;grid-template-rows:1fr 1fr;min-height:0}
+#left>div{display:flex;flex-direction:column;min-height:0}
+#left>div+div{border-top:1px solid var(--bd)}
+summary{cursor:pointer;padding:2px 4px;user-select:none;color:var(--tx)}
+.f{padding:2px 8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.f:hover{background:#2a2d2e}.f.on{background:var(--sel)}
+#ctr{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--bg)}
+#eh{padding:6px 12px;border-bottom:1px solid var(--bd);display:flex;gap:10px;align-items:center;min-height:32px;background:var(--panel)}
+#eh .n{color:var(--wr)}
+#ed,#img,#empty{flex:1;min-height:0}
+#img{display:none;align-items:center;justify-content:center;background:repeating-conic-gradient(#2a2a2a 0 25%,#222 0 50%) 0 0/16px 16px;padding:16px}
+#img img{max-width:100%;max-height:100%;image-rendering:pixelated}
+#empty{display:flex;align-items:center;justify-content:center;color:var(--mut);text-align:center;padding:20px}
+.v{padding:6px 10px;border-bottom:1px solid #2f2f2f}
+.v.head{background:#1f2b38;border-left:2px solid var(--ac)}
+.v .t{display:flex;justify-content:space-between;gap:6px}
+.v .m{color:var(--mut);font-size:12px}
+.v .a{display:flex;gap:2px;margin-top:3px;flex-wrap:wrap}
+.v .a button{padding:1px 6px;font-size:12px;border-color:var(--bd)}
+.tag{font-size:11px;border:1px solid var(--bd);border-radius:3px;padding:0 5px;color:var(--mut)}
+.pg{padding:10px 12px;border-bottom:1px solid var(--bd)}
+.pg h4{margin:0 0 6px;font-size:12px;color:var(--mut);font-weight:600}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:1px 0}
+.kv span:first-child{color:var(--mut)}.kv span:last-child{text-align:right;word-break:break-all}
+.pm{font:12px ui-monospace,Menlo,Consolas,monospace;word-break:break-all;padding:1px 0}
+.warn{color:var(--wr)}.ok{color:var(--ok)}.err{color:var(--er)}
+#bot{background:var(--panel);border-top:1px solid var(--bd);display:flex;flex-direction:column;min-height:0}
+#out{flex:1;overflow:auto;padding:6px 12px;font:12px ui-monospace,Menlo,Consolas,monospace}
+#cmd{display:flex;border-top:1px solid var(--bd)}
+#cmd span{padding:5px 0 5px 12px;color:var(--ok);font:12px ui-monospace,Menlo,Consolas,monospace}
+#cmd input{flex:1;background:transparent;border:0;color:var(--tx);padding:5px 8px;font:12px ui-monospace,Menlo,Consolas,monospace;outline:0}
+#dlg{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:9}
+#dlg>div{width:min(1100px,94vw);height:min(640px,86vh);background:var(--panel);border:1px solid var(--bd);border-radius:6px;display:grid;grid-template-columns:240px 1fr;grid-template-rows:auto 1fr;overflow:hidden}
+#dlg header{grid-column:1/3;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--bd);font-weight:600}
+#dl{overflow:auto;border-right:1px solid var(--bd)}
+#dd{min-width:0}
+.drop #main{outline:2px dashed var(--ac);outline-offset:-4px}
+@media(max-width:1000px){
+ body{grid-template-rows:42px auto 220px;overflow:auto;height:auto;min-height:100%}
+ #main{grid-template-columns:1fr}
+ #left{grid-template-rows:260px 260px}
+ #ctr{height:62vh}.col.r{border-left:0;max-height:none}
+ #dlg>div{grid-template-columns:1fr;grid-template-rows:auto 140px 1fr}#dlg header{grid-column:1}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="top">
+ <b>AppReverse Studio</b>
+ <button id="bOpen" class="pri"><i data-lucide="folder-open"></i>Fayl ochish</button>
+ <span class="sep"></span>
+ <button id="bSave" disabled><i data-lucide="save"></i>Saqlash</button>
+ <button id="bUndo" disabled><i data-lucide="undo-2"></i>Undo</button>
+ <button id="bRedo" disabled><i data-lucide="redo-2"></i>Redo</button>
+ <span class="sep"></span>
+ <button id="bBuild" disabled><i data-lucide="hammer"></i>Qayta yig‘ish</button>
+ <span class="sp"></span>
+ <span id="stat" style="color:var(--mut)">Fayl yuklanmagan</span>
+ <input id="fin" type="file" hidden accept=".apk,.exe,.zip,.jar,.aab,.dll">
+ <input id="fadd" type="file" hidden><input id="frep" type="file" hidden>
+</div>
+
+<div id="main">
+ <div id="left" class="col">
+  <div>
+   <div class="ph">Fayllar<div><button id="bAdd" title="Fayl qo‘shish" disabled>+ Qo‘shish</button><button id="bRep" title="Tanlangan faylni almashtirish" disabled>Almashtirish</button><button id="bDel" title="O‘chirish" disabled>O‘chirish</button></div></div>
+   <div class="sc" id="tree"></div>
+  </div>
+  <div>
+   <div class="ph">Versiyalar tarixi<span id="br" class="tag">main</span></div>
+   <div class="sc" id="vlist"></div>
+  </div>
+ </div>
+ <div id="ctr">
+  <div id="eh"><span id="fp" style="color:var(--mut)">Fayl tanlanmagan</span><span id="fn" class="n"></span></div>
+  <div id="empty">APK, AAB, JAR, ZIP yoki EXE faylni bu yerga tashlang<br>yoki “Fayl ochish” tugmasini bosing.</div>
+  <div id="ed" style="display:none"></div>
+  <div id="img"><img alt="Rasm ko‘rinishi"></div>
+ </div>
+ <div class="col r"><div class="ph">Xossalar</div><div id="props"></div></div>
+</div>
+
+<div id="bot">
+ <div class="ph">Build chiqishi va terminal<button id="bClr">Tozalash</button></div>
+ <div id="out"></div>
+ <div id="cmd"><span>&gt;</span><input id="ci" placeholder="help" aria-label="Terminal buyrug‘i" autocomplete="off"></div>
+</div>
+
+<div id="dlg"><div><header><span id="dt">Versiyalarni solishtirish</span><button id="dx">Yopish</button></header><div id="dl"></div><div id="dd"></div></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dec=b=>new TextDecoder().decode(b),enc=s=>new TextEncoder().encode(s);
+const fmt=n=>n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(2)+' MB';
+const ext=p=>(p.split('.').pop()||'').toLowerCase();
+const S={name:'',size:0,ext:'',sha:'',pe:null,ro:false,vs:[],head:-1,redo:[],branch:'main',sel:null,dirty:false};
+const F=()=>S.vs[S.head]?.files;
+const ZIPS=['apk','aab','zip','jar'],IMGS=['png','jpg','jpeg','webp','gif'];
+const LANG={xml:'xml',json:'json',js:'javascript',html:'html',css:'css',md:'markdown',java:'java',kt:'kotlin',yml:'yaml',yaml:'yaml',properties:'ini'};
+const DANGER=/SMS|RECORD_AUDIO|CAMERA|LOCATION|CONTACTS|CALL_LOG|SYSTEM_ALERT_WINDOW|REQUEST_INSTALL_PACKAGES|ACCESSIBILITY|MANAGE_EXTERNAL_STORAGE/;
+
+function log(m,c){const e=document.createElement('div');if(c)e.className=c;e.textContent='['+new Date().toLocaleTimeString()+'] '+m;$('#out').append(e);$('#out').scrollTop=1e9}
+
+/* ---------- Monaco ---------- */
+const MV='https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min';
+let ed=null,mon=null,diffEd=null;
+window.MonacoEnvironment={getWorkerUrl:()=>URL.createObjectURL(new Blob([`self.MonacoEnvironment={baseUrl:'${MV}/'};importScripts('${MV}/vs/base/worker/workerMain.js');`],{type:'text/javascript'}))};
+if(window.require){require.config({paths:{vs:MV+'/vs'}});require(['vs/editor/editor.main'],()=>{mon=window.monaco;ed=mon.editor.create($('#ed'),{theme:'vs-dark',automaticLayout:true,minimap:{enabled:false},fontSize:13,scrollBeyondLastLine:false});ed.addCommand(mon.KeyMod.CtrlCmd|mon.KeyCode.KeyS,save);log('Monaco muharriri yuklandi','ok');if(S.sel)openFile(S.sel,true)},()=>log('Monaco yuklanmadi (internet kerak)','err'))}else log('Monaco yuklanmadi (internet kerak)','err');
+
+/* ---------- Binary helpers ---------- */
+function isText(b){const s=b.subarray(0,4096);if(s.includes(0))return false;try{new TextDecoder('utf-8',{fatal:true}).decode(s,{stream:true});return true}catch(e){return false}}
+function hex(b){let o='';const n=Math.min(b.length,4096);for(let i=0;i<n;i+=16){const r=b.subarray(i,i+16);o+=i.toString(16).padStart(8,'0')+'  '+[...r].map(x=>x.toString(16).padStart(2,'0')).join(' ').padEnd(48)+' '+[...r].map(x=>x>31&&x<127?String.fromCharCode(x):'.').join('')+'\n'}return o+(b.length>n?'\n… (birinchi 4 KB ko‘rsatildi, jami '+fmt(b.length)+')':'')}
+function same(a,b){if(a===b)return true;if(a.length!==b.length)return false;for(let i=0;i<a.length;i++)if(a[i]!==b[i])return false;return true}
+
+/* Android binary XML (AXML) -> matn */
+function axml(b){const d=new DataView(b.buffer,b.byteOffset,b.byteLength),u16=o=>d.getUint16(o,true),u32=o=>d.getUint32(o,true),i32=o=>d.getInt32(o,true);
+ let p=8,st=[],out=[],dep=0,nsm=new Map(),nsd=[];
+ const ent=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+ while(p<b.length){const t=u16(p),sz=u32(p+4);
+  if(t===1){const n=u32(p+8),fl=u32(p+16),so=u32(p+20),u8=fl&256;
+   for(let i=0;i<n;i++){let o=p+so+u32(p+28+i*4);
+    if(u8){let l=b[o++];if(l&128)o++;let l2=b[o++];if(l2&128){l2=((l2&127)<<8)|b[o++]}st.push(dec(b.subarray(o,o+l2)))}
+    else{let l=u16(o);o+=2;if(l&32768){l=((l&32767)<<16)|u16(o);o+=2}let s='';for(let k=0;k<l;k++)s+=String.fromCharCode(u16(o+k*2));st.push(s)}}}
+  else if(t===0x100){const pf=st[i32(p+16)],uri=st[i32(p+20)];nsm.set(uri,pf);nsd.push([pf,uri])}
+  else if(t===0x102){const nm=st[i32(p+20)],as=p+16+u16(p+24),ac=u16(p+28);let a='';
+   if(nsd.length){a=nsd.map(([f,u])=>` xmlns:${f}="${esc(u)}"`).join('');nsd=[]}
+   for(let i=0;i<ac;i++){const q=as+i*20,ns=i32(q),an=st[i32(q+4)],raw=i32(q+8),dt=b[q+15],dv=u32(q+16);let v;
+    if(dt===3)v=st[raw>=0?raw:dv];else if(dt===0x10)v=String(i32(q+16));else if(dt===0x12)v=dv?'true':'false';else if(dt===1)v='@0x'+dv.toString(16);else v='0x'+dv.toString(16);
+    a+=` ${ns>=0&&nsm.get(st[ns])?nsm.get(st[ns])+':':''}${an}="${ent(String(v))}"`}
+   out.push('  '.repeat(dep)+'<'+nm+a+'>');dep++}
+  else if(t===0x103){dep--;out.push('  '.repeat(dep)+'</'+st[i32(p+20)]+'>')}
+  p+=sz||8}
+ return '<?xml version="1.0" encoding="utf-8"?>\n'+out.join('\n')}
+
+/* DEX sarlavhasi */
+function dexInfo(b){const d=new DataView(b.buffer,b.byteOffset,b.byteLength);if(b.length<112||dec(b.subarray(0,3))!=='dex')return null;const g=o=>d.getUint32(o,true);return{ver:dec(b.subarray(4,7)),str:g(56),typ:g(64),meth:g(88),cls:g(96)}}
+
+/* PE tahlili */
+function parsePE(b){const d=new DataView(b.buffer,b.byteOffset,b.byteLength),u16=o=>d.getUint16(o,true),u32=o=>d.getUint32(o,true);
+ if(u16(0)!==0x5a4d)throw Error('MZ imzosi topilmadi — bu PE fayl emas');const pe=u32(0x3c);if(u32(pe)!==0x4550)throw Error('PE imzosi topilmadi');
+ const mach=u16(pe+4),ns=u16(pe+6),ts=u32(pe+8),osz=u16(pe+20),chr=u16(pe+22),o=pe+24,p64=u16(o)===0x20b,dd=o+(p64?112:96);
+ const sec=[];for(let i=0;i<ns;i++){const s=o+osz+i*40;sec.push({n:dec(b.subarray(s,s+8)).replace(/\0+$/,''),vs:u32(s+8),va:u32(s+12),rs:u32(s+16),rp:u32(s+20),fl:u32(s+36)})}
+ const off=r=>{for(const s of sec)if(r>=s.va&&r<s.va+Math.max(s.vs,s.rs))return r-s.va+s.rp;return -1};
+ const str=p=>{let e=p;while(e<b.length&&b[e])e++;return dec(b.subarray(p,e))};
+ const nd=u32(o+(p64?108:92)),dir=i=>i<nd?{r:u32(dd+i*8),s:u32(dd+i*8+4)}:{r:0,s:0};
+ const imp=[],exp=[],res=[];
+ try{const I=dir(1);if(I.r){let p=off(I.r);while(p>0&&u32(p+12)){const dll=str(off(u32(p+12)));let t=off(u32(p)||u32(p+16));const fn=[],w=p64?8:4;
+  while(t>0&&fn.length<3000){const v=p64?d.getBigUint64(t,true):BigInt(u32(t));if(!v)break;if(v>>BigInt(w*8-1))fn.push('#'+Number(v&0xffffn));else fn.push(str(off(Number(v))+2));t+=w}
+  imp.push({dll,fn});p+=20}}}catch(e){}
+ try{const E=dir(0);if(E.r){const p=off(E.r),n=u32(p+24),nm=off(u32(p+32));for(let i=0;i<Math.min(n,5000);i++)exp.push(str(off(u32(nm+i*4))))}}catch(e){}
+ const TN={1:'CURSOR',2:'BITMAP',3:'ICON',4:'MENU',5:'DIALOG',6:'STRING',9:'ACCELERATOR',10:'RCDATA',12:'GROUP_CURSOR',14:'GROUP_ICON',16:'VERSION',24:'MANIFEST'};
+ try{const R=dir(2);if(R.r){const bs=off(R.r),c=u16(bs+12)+u16(bs+14);for(let i=0;i<c;i++){const id=u32(bs+16+i*8),sub=u32(bs+20+i*8)&0x7fffffff,sc=u16(bs+sub+12)+u16(bs+sub+14);res.push((id&0x80000000?'(nomli tur)':(TN[id]||'TYPE_'+id))+' — '+sc+' ta element')}}}catch(e){}
+ const M={0x14c:'x86 (i386)',0x8664:'x64 (AMD64)',0x1c0:'ARM',0xaa64:'ARM64'};
+ const dotnet=dir(14).r!==0;
+ const H=`Format: ${p64?'PE32+ (64-bit)':'PE32 (32-bit)'}\nArxitektura: ${M[mach]||'0x'+mach.toString(16)}\nTuri: ${chr&0x2000?'DLL':'EXE'}\nSubsystem: ${({2:'Windows GUI',3:'Windows Console'})[u16(o+68)]||u16(o+68)}\nTime-date stamp: ${new Date(ts*1000).toISOString()}\nEntry point RVA: 0x${u32(o+16).toString(16)}\nImage base: 0x${(p64?Number(d.getBigUint64(o+24,true)):u32(o+28)).toString(16)}\nBo‘limlar soni: ${ns}\n.NET (CLR header): ${dotnet?'HA — boshqariladigan kod':'yo‘q — native kod'}\n`;
+ const files=new Map([['PE/Headers.txt',enc(H)],
+  ['PE/Sections.txt',enc(sec.map(s=>`${s.n.padEnd(8)} VA=0x${s.va.toString(16).padEnd(8)} VSize=${String(s.vs).padEnd(9)} RawPtr=0x${s.rp.toString(16).padEnd(8)} RawSize=${s.rs}`).join('\n'))],
+  ['PE/Imports.txt',enc(imp.map(x=>x.dll+'\n'+x.fn.map(f=>'    '+f).join('\n')).join('\n\n')||'(import yo‘q yoki o‘qib bo‘lmadi)')],
+  ['PE/Exports.txt',enc(exp.join('\n')||'(eksport yo‘q)')],
+  ['PE/Resources.txt',enc(res.join('\n')||'(resurs yo‘q)')]]);
+ return{files,dotnet,p64,mach:M[mach]||'?',imp:imp.length,exp:exp.length}}
+
+/* ---------- Versiyalar ---------- */
+function commit(label,mut){if(S.ro)return log('Bu format brauzerda tahrirlanmaydi','err');const f=new Map(F());mut(f);S.vs.push({parent:S.head,branch:S.branch,label,time:Date.now(),files:f});S.head=S.vs.length-1;S.redo=[];render();log('Version '+(S.head+1)+' – '+label,'ok')}
+function go(i,why){S.head=i;S.branch=S.vs[i].branch;S.dirty=false;render();if(S.sel&&F().has(S.sel))openFile(S.sel,true);else clearView();log(why+': Version '+(i+1),'ok')}
+function undo(){const p=S.vs[S.head]?.parent;if(p<0||p==null)return;S.redo.push(S.head);const r=S.redo.slice();go(p,'Undo');S.redo=r}
+function redo(){if(!S.redo.length)return;const i=S.redo.pop(),r=S.redo.slice();go(i,'Redo');S.redo=r}
+
+/* ---------- Faylni yuklash ---------- */
+async function load(file){
+ if(!confirm('Tasdiqlang: bu dasturni tahrirlash huquqiga egaman (o‘zimniki yoki ruxsat olingan).'))return;
+ if(file.size>512*1048576)return log('Fayl 512 MB dan katta','err');
+ const e=ext(file.name);log('Yuklanmoqda: '+file.name+' ('+fmt(file.size)+') — fayl ishga tushirilmaydi, faqat o‘qiladi');
+ const buf=new Uint8Array(await file.arrayBuffer());let files=new Map(),pe=null;
+ try{
+  if(ZIPS.includes(e)){if(buf[0]!==0x50||buf[1]!==0x4b)throw Error('ZIP/APK imzosi (PK) topilmadi — fayl buzilgan yoki boshqa format');
+   const z=await JSZip.loadAsync(buf);for(const[p,en]of Object.entries(z.files))if(!en.dir)files.set(p,await en.async('uint8array'))}
+  else if(e==='exe'||e==='dll'){pe=parsePE(buf);files=pe.files}
+  else throw Error('Qo‘llab-quvvatlanmaydigan format: .'+e)
+ }catch(x){return log('Xato: '+x.message,'err')}
+ let sha='';try{sha=[...new Uint8Array(await crypto.subtle.digest('SHA-256',buf))].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(x){sha='(mavjud emas)'}
+ Object.assign(S,{name:file.name,size:file.size,ext:e,sha,pe,ro:!!pe,vs:[{parent:-1,branch:'main',label:'Original fayl',time:Date.now(),files}],head:0,redo:[],branch:'main',sel:null,dirty:false});
+ clearView();render();log('Yuklandi: '+files.size+' ta element','ok');
+ if(pe)log('EXE: faqat tahlil rejimi. Resurslarni tahrirlash va qayta yig‘ish brauzerda mumkin emas — '+(pe.dotnet?'.NET dastur: ILSpy / dnSpy ishlating':'native kod: Resource Hacker, Ghidra yoki IDA ishlating'),'warn')}
+
+/* ---------- Ko'rinish ---------- */
+function viewOf(p,b){if(!b)return{t:'',lang:'plaintext',ro:true};const e=ext(p);
+ if(e==='xml'&&b[0]===3&&b[1]===0){try{return{t:axml(b),lang:'xml',ro:true,note:'Binary XML (AXML) dekodlandi — faqat o‘qish'}}catch(x){}}
+ if(isText(b))return{t:dec(b),lang:LANG[e]||'plaintext',ro:S.ro,note:S.ro?'Tahlil natijasi — faqat o‘qish':''};
+ return{t:hex(b),lang:'plaintext',ro:true,note:'Binary fayl — hex ko‘rinish (faqat o‘qish)'}}
+function clearView(){S.sel=null;$('#empty').style.display='flex';$('#ed').style.display='none';$('#img').style.display='none';$('#fp').textContent='Fayl tanlanmagan';$('#fn').textContent='';props()}
+let model=null,imgUrl=null;
+function openFile(p,force){
+ if(!force&&S.dirty&&!confirm('Saqlanmagan o‘zgarishlar bekor qilinsin?'))return;
+ const b=F().get(p);if(!b)return;S.sel=p;S.dirty=false;$('#empty').style.display='none';$('#fp').textContent=p;
+ document.querySelectorAll('.f').forEach(x=>x.classList.toggle('on',x.dataset.p===p));
+ if(IMGS.includes(ext(p))){if(imgUrl)URL.revokeObjectURL(imgUrl);imgUrl=URL.createObjectURL(new Blob([b]));$('#img img').src=imgUrl;$('#img').style.display='flex';$('#ed').style.display='none';$('#fn').textContent=fmt(b.length);props();return}
+ $('#img').style.display='none';
+ if(!ed){log('Muharrir hali yuklanmagan','warn');return}
+ $('#ed').style.display='block';const v=viewOf(p,b);
+ if(model)model.dispose();model=mon.editor.createModel(v.t,v.lang);ed.setModel(model);ed.updateOptions({readOnly:!!v.ro});
+ model.onDidChangeContent(()=>{S.dirty=true;$('#fn').textContent='● saqlanmagan';$('#bSave').disabled=false});
+ $('#fn').textContent=v.note||'';$('#bSave').disabled=true;props()}
+function save(){if(!S.dirty||!model||S.ro)return;const p=S.sel,t=model.getValue();S.dirty=false;commit('Tahrirlandi: '+p,f=>f.set(p,enc(t)));$('#fn').textContent='Saqlandi';$('#bSave').disabled=true}
+
+/* ---------- Render ---------- */
+function tree(){const root={};for(const p of[...F().keys()].sort()){let n=root;const ps=p.split('/');ps.forEach((s,i)=>{if(i===ps.length-1)n[s]=p;else n=n[s]??={}})}return root}
+function node(n,d){let h='';const ks=Object.keys(n).sort((a,b)=>{const x=typeof n[a]=='object',y=typeof n[b]=='object';return x===y?a.localeCompare(b):x?-1:1});
+ for(const k of ks){const v=n[k];if(typeof v==='string')h+=`<div class="f${v===S.sel?' on':''}" tabindex="0" data-p="${esc(v)}" style="padding-left:${d*12+16}px">${esc(k)}</div>`;else h+=`<details ${d<1?'open':''}><summary style="padding-left:${d*12+4}px">${esc(k)}</summary>${node(v,d+1)}</details>`}return h}
+function render(){const has=S.head>=0;
+ $('#tree').innerHTML=has?node(tree(),0):'<div class="pg" style="color:var(--mut)">Fayl yuklanmagan</div>';
+ $('#vlist').innerHTML=S.vs.map((v,i)=>({v,i})).reverse().map(({v,i})=>`<div class="v${i===S.head?' head':''}"><div class="t"><span>v${i+1} — ${esc(v.label)}</span><span class="tag">${esc(v.branch)}</span></div><div class="m">${new Date(v.time).toLocaleTimeString()}</div><div class="a"><button data-a="co" data-i="${i}">Rollback</button><button data-a="rs" data-i="${i}">Restore</button><button data-a="br" data-i="${i}">Branch</button><button data-a="cm" data-i="${i}">Compare</button></div></div>`).join('');
+ $('#br').textContent=S.branch;$('#stat').textContent=has?S.name+' · '+fmt(S.size)+' · v'+(S.head+1)+'/'+S.vs.length:'Fayl yuklanmagan';
+ $('#bUndo').disabled=!(has&&S.vs[S.head].parent>=0);$('#bRedo').disabled=!S.redo.length;$('#bBuild').disabled=!has||S.ro;
+ for(const id of['bAdd','bRep','bDel'])$('#'+id).disabled=!has||S.ro;props()}
+function props(){if(S.head<0){$('#props').innerHTML='<div class="pg" style="color:var(--mut)">Xossalarni ko‘rish uchun fayl yuklang.</div>';return}
+ const f=F(),kv=(k,v)=>`<div class="kv"><span>${k}</span><span>${esc(v)}</span></div>`;
+ let h=`<div class="pg"><h4>Fayl</h4>${kv('Nomi',S.name)}${kv('Hajmi',fmt(S.size))}${kv('Format','.'+S.ext+(S.pe?' (PE'+(S.pe.p64?'32+':'32')+')':' (ZIP konteyner)'))}${kv('Elementlar',f.size)}<div class="pm" style="color:var(--mut)">SHA-256: ${esc(S.sha)}</div></div>`;
+ if(S.sel){const b=f.get(S.sel);h+=`<div class="pg"><h4>Tanlangan</h4>${kv('Yo‘l',S.sel)}${kv('Hajmi',fmt(b.length))}</div>`}
+ if(S.pe)h+=`<div class="pg"><h4>PE</h4>${kv('Arxitektura',S.pe.mach)}${kv('.NET',S.pe.dotnet?'ha':'yo‘q')}${kv('Import DLL',S.pe.imp)}${kv('Eksportlar',S.pe.exp)}</div>`;
+ const m=f.get('AndroidManifest.xml');
+ if(m){let t='';try{t=axml(m)}catch(e){try{t=dec(m)}catch(x){}}
+  const g=r=>(t.match(r)||[])[1]||'—',perms=[...t.matchAll(/<uses-permission[^>]*android:name="([^"]+)"/g)].map(x=>x[1]);
+  h+=`<div class="pg"><h4>Manifest</h4>${kv('Package',g(/package="([^"]+)"/))}${kv('versionName',g(/versionName="([^"]+)"/))}${kv('versionCode',g(/versionCode="([^"]+)"/))}${kv('minSdk',g(/minSdkVersion="([^"]+)"/))}${kv('label',g(/<application[^>]*android:label="([^"]+)"/))}</div>
+  <div class="pg"><h4>Ruxsatlar (${perms.length})</h4>${perms.map(x=>`<div class="pm ${DANGER.test(x)?'warn':''}">${esc(x.replace('android.permission.',''))}</div>`).join('')||'—'}</div>`;
+  const dx=[...f.keys()].filter(p=>/^classes\d*\.dex$/.test(p)).map(p=>[p,dexInfo(f.get(p))]);
+  if(dx.length)h+=`<div class="pg"><h4>DEX</h4>${dx.map(([p,i])=>i?`<div class="pm">${p}: ${i.cls} sinf, ${i.meth} metod (v${i.ver})</div>`:`<div class="pm err">${p}: sarlavha noto‘g‘ri</div>`).join('')}</div>`;
+  const sus=[...f.keys()].filter(p=>/\.(exe|dll|so|bin)$/i.test(p)&&/^(assets|res)\//.test(p));
+  h+=`<div class="pg"><h4>Evristik tekshiruv</h4><div class="pm ${perms.some(x=>DANGER.test(x))?'warn':'ok'}">${perms.filter(x=>DANGER.test(x)).length} ta sezgir ruxsat</div><div class="pm ${sus.length?'warn':'ok'}">assets/res ichida ${sus.length} ta bajariladigan fayl</div><div class="pm" style="color:var(--mut)">Bu antivirus emas. Haqiqiy skanerlash uchun backend (ClamAV/VirusTotal) kerak.</div></div>`}
+ h+=`<div class="pg"><h4>Cheklovlar</h4><div class="pm" style="color:var(--mut)">${S.pe?'EXE: faqat tahlil. Qayta yig‘ish yo‘q.':'Smali, DEX tahrirlash, ilova nomi/ikonka (resources.arsc) va imzolash brauzerda mumkin emas — backend vositalari (apktool, apksigner) kerak.'}</div></div>`;
+ $('#props').innerHTML=h}
+
+/* ---------- Qayta yig'ish ---------- */
+async function build(){if(S.ro||S.head<0)return;log('Build boshlandi — v'+(S.head+1),'ok');const z=new JSZip(),errs=[],android=['apk','aab'].includes(S.ext),sig=/^META-INF\/(MANIFEST\.MF|.+\.(SF|RSA|DSA|EC))$/i;let skip=0;
+ for(const[p,b]of F()){if(android&&sig.test(p)){skip++;continue}
+  if(ext(p)==='xml'&&isText(b)){const d=new DOMParser().parseFromString(dec(b),'application/xml');if(d.querySelector('parsererror'))errs.push(p)}
+  z.file(p,b,{compression:/(^|\/)resources\.arsc$|\.so$/.test(p)?'STORE':'DEFLATE'})}
+ if(errs.length){errs.forEach(p=>log('XML xatosi: '+p,'err'));return log('Build to‘xtatildi: '+errs.length+' ta xato','err')}
+ const blob=await z.generateAsync({type:'blob',compression:'DEFLATE'}),a=document.createElement('a'),nm=S.name.replace(/\.[^.]+$/,'')+'-modified.'+S.ext;
+ a.href=URL.createObjectURL(blob);a.download=nm;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+ log('Tayyor: '+nm+' ('+fmt(blob.size)+')','ok');
+ if(android){log(skip+' ta eski imzo fayli olib tashlandi. APK IMZOSIZ.','warn');log('Keyingi qadam: zipalign -p 4 in.apk out.apk && apksigner sign --ks my.jks out.apk','warn')}}
+
+/* ---------- Compare ---------- */
+function compare(a,b){const A=S.vs[a].files,B=S.vs[b].files,ch=[];new Set([...A.keys(),...B.keys()]).forEach(p=>{const x=A.get(p),y=B.get(p);if(!x)ch.push(['+',p]);else if(!y)ch.push(['-',p]);else if(!same(x,y))ch.push(['~',p])});
+ $('#dlg').style.display='flex';$('#dt').textContent=`v${a+1} ⇄ v${b+1} — ${ch.length} ta o‘zgarish`;
+ $('#dl').innerHTML=ch.map(([s,p])=>`<div class="f" data-p="${esc(p)}" title="${esc(p)}"><b class="${s=='+'?'ok':s=='-'?'err':'warn'}">${s}</b> ${esc(p)}</div>`).join('')||'<div class="pg" style="color:var(--mut)">Farq yo‘q</div>';
+ if(!diffEd&&mon)diffEd=mon.editor.createDiffEditor($('#dd'),{theme:'vs-dark',automaticLayout:true,readOnly:true,renderSideBySide:true});
+ $('#dl').onclick=e=>{const f=e.target.closest('.f');if(!f||!diffEd)return;const p=f.dataset.p,o=viewOf(p,A.get(p)),m=viewOf(p,B.get(p));
+  diffEd.setModel({original:mon.editor.createModel(o.t,o.lang),modified:mon.editor.createModel(m.t,m.lang)})};
+ const first=$('#dl .f');if(first)first.click()}
+
+/* ---------- Hodisalar ---------- */
+$('#bOpen').onclick=()=>$('#fin').click();$('#fin').onchange=e=>{if(e.target.files[0])load(e.target.files[0]);e.target.value=''};
+$('#bSave').onclick=save;$('#bUndo').onclick=undo;$('#bRedo').onclick=redo;$('#bBuild').onclick=build;$('#bClr').onclick=()=>$('#out').innerHTML='';
+$('#dx').onclick=()=>$('#dlg').style.display='none';
+$('#tree').onclick=e=>{const f=e.target.closest('.f');if(f)openFile(f.dataset.p)};
+$('#tree').onkeydown=e=>{if(e.key==='Enter'&&e.target.dataset.p)openFile(e.target.dataset.p)};
+$('#vlist').onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,a=b.dataset.a;
+ if(a==='co'){go(i,'Rollback');S.redo=[]}
+ else if(a==='rs')commit('Restore: v'+(i+1),f=>{f.clear();S.vs[i].files.forEach((v,k)=>f.set(k,v))});
+ else if(a==='br'){const n=prompt('Yangi tarmoq nomi:');if(n){S.branch=n.trim();go(i,'Branch “'+S.branch+'”');S.branch=n.trim();render()}}
+ else if(a==='cm')compare(i,S.head)};
+$('#bAdd').onclick=()=>$('#fadd').click();$('#bRep').onclick=()=>{S.sel?$('#frep').click():log('Avval fayl tanlang','warn')};
+$('#bDel').onclick=()=>{if(S.sel&&confirm(S.sel+' o‘chirilsinmi? (versiyada qoladi)')){const p=S.sel;commit('O‘chirildi: '+p,f=>f.delete(p));clearView()}};
+$('#fadd').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const dir=S.sel?S.sel.replace(/[^/]*$/,''):'assets/',p=prompt('Yangi fayl yo‘li:',dir+f.name);if(!p)return;const b=new Uint8Array(await f.arrayBuffer());commit('Qo‘shildi: '+p,m=>m.set(p,b))};
+$('#frep').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||!S.sel)return;const p=S.sel,b=new Uint8Array(await f.arrayBuffer());commit('Almashtirildi: '+p,m=>m.set(p,b));openFile(p,true)};
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();save()}});
+['dragover','dragenter'].forEach(t=>document.addEventListener(t,e=>{e.preventDefault();document.body.classList.add('drop')}));
+['dragleave','drop'].forEach(t=>document.addEventListener(t,e=>{e.preventDefault();document.body.classList.remove('drop')}));
+document.addEventListener('drop',e=>{if(e.dataTransfer.files[0])load(e.dataTransfer.files[0])});
+$('#ci').onkeydown=e=>{if(e.key!=='Enter')return;const c=e.target.value.trim().split(/\s+/);e.target.value='';log('> '+c.join(' '));
+ const k=c[0];if(k==='help')log('help, info, ls [papka], versions, build, clear');
+ else if(k==='clear')$('#out').innerHTML='';else if(S.head<0)log('Avval fayl yuklang','warn');
+ else if(k==='info')log(`${S.name} | ${fmt(S.size)} | .${S.ext} | ${F().size} element | SHA-256 ${S.sha}`);
+ else if(k==='ls')[...F().keys()].filter(p=>p.startsWith(c[1]||'')).slice(0,200).forEach(p=>log(p+'  '+fmt(F().get(p).length)));
+ else if(k==='versions')S.vs.forEach((v,i)=>log(`v${i+1} [${v.branch}] ${v.label}${i===S.head?'  <- joriy':''}`));
+ else if(k==='build')build();else log('Noma’lum buyruq. “help” yozing.','err')};
+lucide.createIcons();render();clearView();
+log('AppReverse Studio tayyor. Fayllar faqat o‘qiladi va hech qachon ishga tushirilmaydi.');
+</script>
+</body>
+</html>
